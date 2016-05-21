@@ -198,6 +198,12 @@ minetest.register_craft({
 	output = 'landmine:landmine_dirt_with_grass',
 })
 
+minetest.register_craft({
+	type = "shapeless",
+	recipe = {"default:dirt", "default:grass_1", "landmine:landmine"},
+	output = 'landmine:landmine_dirt_with_grass',
+})
+
 minetest.register_abm({
 	nodenames = {"group:landmine"},
 	interval = 1.0,
