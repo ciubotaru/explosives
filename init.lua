@@ -126,6 +126,46 @@ minetest.register_node("landmine:landmine_dirt_with_grass", {
 	on_blast = boom,
 })
 
+minetest.register_node("landmine:minefield_sign", {
+	description = i18n('Minefield sign'),
+	tiles = {
+		"default_wood.png",
+		"default_wood.png",
+		"default_wood.png",
+		"default_wood.png",
+		"default_wood.png",
+		"default_wood.png^landmine_sign.png",
+	},
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.4375, -0.25, -0.0625, 0.4375, 0.375, 0},
+			{-0.0625, -0.5, -0.0625, 0.0625, -0.1875, 0},
+		}
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = {-0.4375, -0.5, -0.0625, 0.4375, 0.375, 0}
+	},
+	groups = {choppy = 2, flammable = 2, oddly_breakable_by_hand = 3},
+	sounds = default.node_sound_wood_defaults(),
+	on_construct = function(pos)
+		local meta = minetest.get_meta(pos)
+		meta:set_string('infotext', i18n('Danger\nMines'))
+	end,
+})
+
+if minetest.get_modpath('dye') ~= nil then
+	minetest.register_craft({
+		type = "shapeless",
+		recipe = {'dye:black', 'dye:orange', 'dye:red', 'default:sign_wall_wood'},
+		output = 'landmine:minefield_sign',
+	})
+end
+
 minetest.register_craftitem("landmine:fuze", {
 	description = "Land mine fuze",
 	inventory_image = "landmine_fuze.png",
