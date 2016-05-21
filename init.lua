@@ -75,6 +75,7 @@ minetest.register_node("landmine:landmine", {
 		}
 	},
 	groups = {
+		landmine = 1,
 		not_in_creative_inventory = 0,
 		falling_node = 1,
 	},
@@ -86,7 +87,10 @@ minetest.register_node("landmine:landmine", {
 minetest.register_node("landmine:landmine_dirt", {
 	description = i18n('Land mine (dirt)'),
 	tiles = {"default_dirt.png"},
-	groups = {not_in_creative_inventory = 0},
+	groups = {
+		landmine = 1,
+		not_in_creative_inventory = 0
+	},
 	sounds = default.node_sound_dirt_defaults(),
 	on_punch = detonate,
 	on_blast = boom,
@@ -102,7 +106,10 @@ minetest.register_node("landmine:landmine_dirt_with_grass", {
 			tileable_vertical = false
 		}
 	},
-	groups = {not_in_creative_inventory = 0},
+	groups = {
+		landmine = 1,
+		not_in_creative_inventory = 0
+	},
 	sounds = default.node_sound_dirt_defaults({
 		footstep = {
 			name="default_grass_footstep",
@@ -143,6 +150,28 @@ minetest.register_craft({
 	type = "shapeless",
 	recipe = {"default:grass_1", "landmine:landmine_dirt"},
 	output = 'landmine:landmine_dirt_with_grass',
+})
+
+minetest.register_abm({
+	nodenames = {"group:landmine"},
+	interval = 1.0,
+	chance = 1,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+--		local node_above = minetest.get_node({x = pos.x, y = pos.y + 1, z = pos.z})
+		--detonate if something is placed above
+		if minetest.get_node({x = pos.x, y = pos.y + 1, z = pos.z}).name ~= "air" then
+			detonate(pos)
+			return
+		end
+		--detonate if someone walks upon the mine
+		local objs = minetest.get_objects_inside_radius({x = pos.x, y = pos.y + 0.3, z = pos.z}, 0.6)
+		for k, player in pairs(objs) do
+			if player:get_player_name() ~= "" then
+				detonate(pos)
+				return
+			end
+		end
+	end
 })
 
 minetest.log('action', 'MOD: Landmine version ' .. landmine_version .. ' loaded.')
