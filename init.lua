@@ -44,9 +44,15 @@ local function detonate(pos, node, player, pointed_thing)
 	minetest.set_node(pos, {name = "landmine:landmine"})
 end
 
-function boom(pos)
-	minetest.set_node(pos, {name = "tnt:tnt_burning"})
-	minetest.get_node_timer(pos):start(0.1) --explode immediately
+local function boom(pos)
+	local radius = tonumber(minetest.setting_get("tnt_radius") or 3)
+       local node = minetest.get_node(pos)
+       local def = {
+               name = node.name,
+               radius = radius,
+               damage_radius = radius * 2,
+       }
+       tnt.boom(pos, def)
 end
 
 minetest.register_node("landmine:landmine", {
