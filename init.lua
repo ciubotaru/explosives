@@ -4,8 +4,7 @@
 --Copyright (C) 2016 Vitalie Ciubotaru <vitalie at ciubotaru dot tk>
 
 minetest.log('action', 'MOD: Landmine loading...')
-landmine_version = '0.0.1'
-local singleplayer = minetest.is_singleplayer()
+local landmine_version = '0.0.1'
 
 local i18n --internationalization
 if minetest.get_modpath("intllib") then
@@ -20,18 +19,11 @@ else
 	end
 end
 
+local singleplayer = minetest.is_singleplayer()
 local setting = minetest.setting_getbool("enable_tnt")
 if (not singleplayer and setting ~= true) or
 		(singleplayer and setting == false) then
-if singleplayer then
-minetest.log('action','singleplayer')
-else
-minetest.log('action','not singleplayer')
-end
-if (setting ~= true or setting == false) then
-minetest.log('action', 'setting false')
-end
-minetest.log('action', 'MOD: Landmine not loaded.')
+	minetest.log('action', 'MOD: Landmine can not load (enable TNT).')
 	return
 end
 
