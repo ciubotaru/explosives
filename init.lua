@@ -83,7 +83,6 @@ minetest.register_node("landmine:landmine", {
 	groups = {
 		landmine = 1,
 		not_in_creative_inventory = 0,
-		falling_node = 1,
 	},
 	on_punch = detonate,
 	on_timer = boom,
