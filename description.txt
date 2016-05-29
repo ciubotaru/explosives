@@ -1,0 +1,1 @@
+Adds landmine and related functionality (fuzes, arming/disarming, concealing etc) to Minetest.
