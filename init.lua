@@ -27,24 +27,54 @@ if (not singleplayer and setting ~= true) or
 	return
 end
 
+local function formspec(pos)
+	local timer = minetest.get_node_timer(pos)
+	local formspec =
+		'size[8,2]'..
+--a dirty hack to pass node coords to player_receive_fields
+		'field[0,0;0,0;x;;' .. pos.x .. ']'..
+		'field[0,0;0,0;y;;' .. pos.y .. ']'..
+		'field[0,0;0,0;z;;' .. pos.z .. ']'
+	if timer:is_started() then
+		formspec = formspec ..
+		'label[0,0;' .. i18n('You have @1 seconds to disarm the mine', timer:get_timeout() - timer:get_elapsed()) .. ']' ..
+		'button_exit[0,1;8,1;stop;' .. i18n('Disarm the mine') .. ']'
+		return formspec
+	else
+		formspec = formspec ..
+		'label[0,0;' .. i18n('You will have 30 seconds to run away') .. ']' ..
+		'button_exit[0,1;8,1;start;' .. i18n('Arm the mine') .. ']'
+		return formspec
+	end
+end
+
+local function on_rightclick(pos, node, clicker, itemstack)
+	minetest.show_formspec(
+		clicker:get_player_name(),
+		'landmine:landmine',
+		formspec(pos)
+	)
+	return itemstack
+end
+
 local function detonate(pos, node, player, pointed_thing)
 	local timer = minetest.get_node_timer(pos)
 	if not timer:is_started() then
 		minetest.sound_play("landmine_lock.ogg", {pos = pos})
 		timer:start(3) --3 seconds to run away
+		minetest.set_node(pos, {name = "landmine:landmine_armed"})
 	end
-	minetest.set_node(pos, {name = "landmine:landmine"})
 end
 
 local function boom(pos)
 	local radius = tonumber(minetest.setting_get("tnt_radius") or 3)
-       local node = minetest.get_node(pos)
-       local def = {
-               name = node.name,
-               radius = radius,
-               damage_radius = radius * 2,
-       }
-       tnt.boom(pos, def)
+	local node = minetest.get_node(pos)
+	local def = {
+		name = node.name,
+		radius = radius,
+		damage_radius = radius * 2,
+	}
+	tnt.boom(pos, def)
 end
 
 minetest.register_node("landmine:landmine", {
@@ -73,8 +103,46 @@ minetest.register_node("landmine:landmine", {
 		}
 	},
 	groups = {
+		dig_immediate = 3,
+		explody = 1,
+	},
+	on_rightclick = on_rightclick,
+	on_timer = function(pos, elapsed)
+		minetest.remove_node(pos)
+		minetest.place_node(pos, {name = 'landmine:landmine_armed'})
+	end,
+	on_blast = boom,
+})
+
+
+minetest.register_node("landmine:landmine_armed", {
+	description = i18n('Land mine (armed)'),
+	tiles = {
+		"landmine_top.png",
+		"landmine_bottom.png",
+		"landmine_side.png",
+		"landmine_side.png",
+		"landmine_side.png",
+		"landmine_side.png"
+	},
+	drawtype = "nodebox",
+	paramtype = "light",
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.1875, -0.5, -0.5, 0.1875, -0.1875, 0.5}, -- NodeBox1
+			{-0.5, -0.5, -0.1875, 0.5, -0.1875, 0.1875}, -- NodeBox2
+			{-0.3125, -0.5, -0.4375, 0.3125, -0.1875, 0.4375}, -- NodeBox3
+			{-0.4375, -0.5, -0.3125, 0.4375, -0.1875, 0.3125}, -- NodeBox4
+			{-0.375, -0.5, -0.375, 0.375, -0.1875, 0.375}, -- NodeBox5
+			{-0.4375, -0.1875, -0.125, 0.4375, -0.0625, 0.125}, -- NodeBox6
+			{-0.125, -0.1875, -0.4375, 0.125, -0.0625, 0.4375}, -- NodeBox7
+			{-0.125, -0.0625, -0.125, 0.125, 0.0625, 0.125}, -- NodeBox8
+		}
+	},
+	groups = {
 		landmine = 1,
-		not_in_creative_inventory = 0,
+		not_in_creative_inventory = 1,
 	},
 	on_punch = detonate,
 	on_timer = boom,
@@ -82,11 +150,27 @@ minetest.register_node("landmine:landmine", {
 })
 
 minetest.register_node("landmine:landmine_dirt", {
-	description = i18n('Land mine (dirt)'),
+	description = i18n('Land mine in dirt'),
+	tiles = {"default_dirt.png"},
+	groups = {
+		dig_immediate = 3,
+		explody = 1,
+	},
+	sounds = default.node_sound_dirt_defaults(),
+	on_rightclick = on_rightclick,
+	on_timer = function(pos, elapsed)
+		minetest.remove_node(pos)
+		minetest.place_node(pos, {name = 'landmine:landmine_dirt_armed'})
+	end,
+	on_blast = boom,
+})
+
+minetest.register_node("landmine:landmine_dirt_armed", {
+	description = i18n('Land mine in dirt (armed)'),
 	tiles = {"default_dirt.png"},
 	groups = {
 		landmine = 1,
-		not_in_creative_inventory = 0
+		not_in_creative_inventory = 1
 	},
 	sounds = default.node_sound_dirt_defaults(),
 	on_punch = detonate,
@@ -94,7 +178,35 @@ minetest.register_node("landmine:landmine_dirt", {
 })
 
 minetest.register_node("landmine:landmine_dirt_with_grass", {
-	description = i18n('Land mine (dirt with grass)'),
+	description = i18n('Land mine in dirt with grass'),
+	tiles = {
+		"default_grass.png",
+		"default_dirt.png",
+		{
+			name = "default_dirt.png^default_grass_side.png",
+			tileable_vertical = false
+		}
+	},
+	groups = {
+		dig_immediate = 3,
+		explody = 1,
+	},
+	sounds = default.node_sound_dirt_defaults({
+		footstep = {
+			name="default_grass_footstep",
+			gain=0.25
+		},
+	}),
+	on_rightclick = on_rightclick,
+	on_timer = function(pos, elapsed)
+		minetest.remove_node(pos)
+		minetest.place_node(pos, {name = 'landmine:landmine_dirt_with_grass_armed'})
+	end,
+	on_blast = boom,
+})
+
+minetest.register_node("landmine:landmine_dirt_with_grass_armed", {
+	description = i18n('Land mine in dirt with grass (armed)'),
 	tiles = {
 		"default_grass.png",
 		"default_dirt.png",
@@ -105,7 +217,7 @@ minetest.register_node("landmine:landmine_dirt_with_grass", {
 	},
 	groups = {
 		landmine = 1,
-		not_in_creative_inventory = 0
+		not_in_creative_inventory = 1
 	},
 	sounds = default.node_sound_dirt_defaults({
 		footstep = {
@@ -200,7 +312,6 @@ minetest.register_abm({
 	interval = 1.0,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
---		local node_above = minetest.get_node({x = pos.x, y = pos.y + 1, z = pos.z})
 		--detonate if something is placed above
 		if minetest.get_node({x = pos.x, y = pos.y + 1, z = pos.z}).name ~= "air" then
 			detonate(pos)
@@ -216,5 +327,18 @@ minetest.register_abm({
 		end
 	end
 })
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	if formname ~= "landmine:landmine" then return end
+	local timer = minetest.get_node_timer({x = fields.x, y = fields.y, z = fields.z})
+	if fields.start then
+		timer:start(30)
+		return
+	end
+	if fields.stop then
+		timer:stop()
+		return
+	end
+end)
 
 minetest.log('action', 'MOD: Landmine version ' .. landmine_version .. ' loaded.')
