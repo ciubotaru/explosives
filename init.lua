@@ -106,6 +106,11 @@ minetest.register_node("landmine:landmine", {
 		dig_immediate = 3,
 		explody = 1,
 	},
+	on_punch = function(pos, node, puncher)
+		if puncher:get_wielded_item():get_name() == "default:torch" then
+			boom(pos)
+		end
+	end,
 	on_rightclick = on_rightclick,
 	on_timer = function(pos, elapsed)
 		minetest.remove_node(pos)
@@ -144,7 +149,13 @@ minetest.register_node("landmine:landmine_armed", {
 		landmine = 1,
 		not_in_creative_inventory = 1,
 	},
-	on_punch = detonate,
+	on_punch = function(pos, node, puncher)
+		if puncher:get_wielded_item():get_name() == "default:torch" then
+			boom(pos)
+		else
+			detonate(pos)
+		end
+	end,
 	on_timer = boom,
 	on_blast = boom,
 })
@@ -157,6 +168,11 @@ minetest.register_node("landmine:landmine_dirt", {
 		explody = 1,
 	},
 	sounds = default.node_sound_dirt_defaults(),
+	on_punch = function(pos, node, puncher)
+		if puncher:get_wielded_item():get_name() == "default:torch" then
+			boom(pos)
+		end
+	end,
 	on_rightclick = on_rightclick,
 	on_timer = function(pos, elapsed)
 		minetest.remove_node(pos)
@@ -173,7 +189,13 @@ minetest.register_node("landmine:landmine_dirt_armed", {
 		not_in_creative_inventory = 1
 	},
 	sounds = default.node_sound_dirt_defaults(),
-	on_punch = detonate,
+	on_punch = function(pos, node, puncher)
+		if puncher:get_wielded_item():get_name() == "default:torch" then
+			boom(pos)
+		else
+			detonate(pos)
+		end
+	end,
 	on_blast = boom,
 })
 
@@ -197,6 +219,11 @@ minetest.register_node("landmine:landmine_dirt_with_grass", {
 			gain=0.25
 		},
 	}),
+	on_punch = function(pos, node, puncher)
+		if puncher:get_wielded_item():get_name() == "default:torch" then
+			boom(pos)
+		end
+	end,
 	on_rightclick = on_rightclick,
 	on_timer = function(pos, elapsed)
 		minetest.remove_node(pos)
@@ -225,7 +252,13 @@ minetest.register_node("landmine:landmine_dirt_with_grass_armed", {
 			gain=0.25
 		},
 	}),
-	on_punch = detonate,
+	on_punch = function(pos, node, puncher)
+		if puncher:get_wielded_item():get_name() == "default:torch" then
+			boom(pos)
+		else
+			detonate(pos)
+		end
+	end,
 	on_blast = boom,
 })
 
