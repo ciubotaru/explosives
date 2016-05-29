@@ -1,2 +1,12 @@
-Landmine (dirt with grass) =
-Landmine (dirt) =
+Arm the mine =
+Danger\\nMines =
+Disarm the mine =
+Land mine =
+Land mine (armed) =
+Land mine in dirt =
+Land mine in dirt (armed) =
+Land mine in dirt with grass =
+Land mine in dirt with grass (armed) =
+Minefield sign =
+You have @1 seconds to disarm the mine =
+You will have 30 seconds to run away =
