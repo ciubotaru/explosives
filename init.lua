@@ -19,6 +19,7 @@ else
 	end
 end
 
+local radius = tonumber(minetest.setting_get("tnt_radius") or 3)
 local singleplayer = minetest.is_singleplayer()
 local setting = minetest.setting_getbool("enable_tnt")
 if (not singleplayer and setting ~= true) or
@@ -67,7 +68,6 @@ local function detonate(pos, node, player, pointed_thing)
 end
 
 local function boom(pos)
-	local radius = tonumber(minetest.setting_get("tnt_radius") or 3)
 	local node = minetest.get_node(pos)
 	local def = {
 		name = node.name,
