@@ -77,6 +77,29 @@ local function boom(pos)
 	tnt.boom(pos, def)
 end
 
+local function dig_up(pos, node, digger)
+	local pos_up = {x = pos.x, y = pos.y + 1, z = pos.z}
+	local node_up = minetest.get_node(pos_up)
+	if node_up.name == node.name then
+		--this recursively calls after_dig_node
+		minetest.node_dig(pos_up, node_up, digger)
+	end
+end
+
+local function dig_down(pos, node, digger)
+	local pos_down = {x = pos.x, y = pos.y - 1, z = pos.z}
+	local node_down = minetest.get_node(pos_down)
+	if node_down.name == node.name then
+		--this recursively calls after_dig_node
+		minetest.node_dig(pos_down, node_down, digger)
+	end
+end
+
+local function after_dig_node(pos, node, metadata, digger)
+	dig_up(pos, node, digger)
+	dig_down(pos, node, digger)
+end
+
 minetest.register_node("landmine:landmine", {
 	description = i18n('Land mine'),
 	tiles = {
@@ -262,6 +285,133 @@ minetest.register_node("landmine:landmine_dirt_with_grass_armed", {
 	on_blast = boom,
 })
 
+minetest.register_node("landmine:navalmine", {
+	description = i18n('Naval mine'),
+	tiles = {
+		"navalmine_top.png",
+		"navalmine_bottom.png",
+		"navalmine_side.png",
+		"navalmine_side.png",
+		"navalmine_side.png",
+		"navalmine_side.png"
+	},
+	drawtype = "nodebox",
+	paramtype = "light",
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.125, -0.3125, -0.125, 0.125, 0.3125, 0.125}, -- NodeBox1
+			{-0.125, -0.125, -0.3125, 0.125, 0.125, 0.3125}, -- NodeBox2
+			{-0.3125, -0.125, -0.125, 0.3125, 0.125, 0.125}, -- NodeBox3
+			{-0.1875, -0.1875, -0.25, 0.1875, 0.1875, 0.25}, -- NodeBox5
+			{-0.25, -0.1875, -0.1875, 0.25, 0.1875, 0.1875}, -- NodeBox6
+			{-0.1875, -0.25, -0.1875, 0.1875, 0.25, 0.1875}, -- NodeBox7
+			{-0.0625, -0.25, -0.25, 0.0625, 0.25, 0.25}, -- NodeBox8
+			{-0.25, -0.25, -0.0625, 0.25, 0.25, 0.0625}, -- NodeBox9
+			{-0.25, -0.0625, -0.25, 0.25, 0.0625, 0.25}, -- NodeBox10
+			{-0.0625, -0.5, -0.0625, 0.0625, 0.5, 0.0625}, -- NodeBox11
+			{-0.5, -0.0625, -0.0625, 0.5, 0.0625, 0.0625}, -- NodeBox12
+			{-0.0625, -0.0625, -0.5, 0.0625, 0.0625, 0.5}, -- NodeBox13
+			{0.25, 0.25, -0.375, 0.375, 0.375, -0.25}, -- NodeBox16
+			{-0.375, 0.25, -0.375, -0.25, 0.375, -0.25}, -- NodeBox17
+			{0.25, 0.25, 0.25, 0.375, 0.375, 0.375}, -- NodeBox18
+			{-0.375, 0.25, 0.25, -0.25, 0.375, 0.375}, -- NodeBox19
+		}
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{-5/16, -5/16, -5/16, 5/16, 5/16, 5/16}, -- NodeBox1
+			{-0.0625, -0.5, -0.0625, 0.0625, 0.5, 0.0625}, -- NodeBox11
+			{-0.5, -0.0625, -0.0625, 0.5, 0.0625, 0.0625}, -- NodeBox12
+			{-0.0625, -0.0625, -0.5, 0.0625, 0.0625, 0.5}, -- NodeBox13
+			{0.25, 0.25, -0.375, 0.375, 0.375, -0.25}, -- NodeBox16
+			{-0.375, 0.25, -0.375, -0.25, 0.375, -0.25}, -- NodeBox17
+			{0.25, 0.25, 0.25, 0.375, 0.375, 0.375}, -- NodeBox18
+			{-0.375, 0.25, 0.25, -0.25, 0.375, 0.375}, -- NodeBox19			
+		}
+	},
+	groups = {
+		dig_immediate = 3,
+		explody = 1,
+	},
+	on_punch = function(pos, node, puncher)
+		if puncher:get_wielded_item():get_name() == "default:torch" then
+			boom(pos)
+		end
+	end,
+	on_rightclick = on_rightclick,
+	on_timer = function(pos, elapsed)
+		--make sure it didn't move
+		if minetest.get_node(pos).name == "landmine:navalmine" then
+			minetest.set_node(pos, {name = 'landmine:navalmine_armed'})
+			minetest.get_meta(pos):set_int("drifting", 0)
+		end
+	end,
+	on_blast = boom,
+})
+
+minetest.register_node("landmine:navalmine_armed", {
+	description = i18n('Naval mine (armed)'),
+	tiles = {
+		"navalmine_top.png",
+		"navalmine_bottom.png",
+		"navalmine_side.png",
+		"navalmine_side.png",
+		"navalmine_side.png",
+		"navalmine_side.png"
+	},
+	drawtype = "nodebox",
+	paramtype = "light",
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.125, -0.3125, -0.125, 0.125, 0.3125, 0.125}, -- NodeBox1
+			{-0.125, -0.125, -0.3125, 0.125, 0.125, 0.3125}, -- NodeBox2
+			{-0.3125, -0.125, -0.125, 0.3125, 0.125, 0.125}, -- NodeBox3
+			{-0.1875, -0.1875, -0.25, 0.1875, 0.1875, 0.25}, -- NodeBox5
+			{-0.25, -0.1875, -0.1875, 0.25, 0.1875, 0.1875}, -- NodeBox6
+			{-0.1875, -0.25, -0.1875, 0.1875, 0.25, 0.1875}, -- NodeBox7
+			{-0.0625, -0.25, -0.25, 0.0625, 0.25, 0.25}, -- NodeBox8
+			{-0.25, -0.25, -0.0625, 0.25, 0.25, 0.0625}, -- NodeBox9
+			{-0.25, -0.0625, -0.25, 0.25, 0.0625, 0.25}, -- NodeBox10
+			{-0.0625, -0.5, -0.0625, 0.0625, 0.5, 0.0625}, -- NodeBox11
+			{-0.5, -0.0625, -0.0625, 0.5, 0.0625, 0.0625}, -- NodeBox12
+			{-0.0625, -0.0625, -0.5, 0.0625, 0.0625, 0.5}, -- NodeBox13
+			{0.25, 0.25, -0.375, 0.375, 0.375, -0.25}, -- NodeBox16
+			{-0.375, 0.25, -0.375, -0.25, 0.375, -0.25}, -- NodeBox17
+			{0.25, 0.25, 0.25, 0.375, 0.375, 0.375}, -- NodeBox18
+			{-0.375, 0.25, 0.25, -0.25, 0.375, 0.375}, -- NodeBox19
+		}
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{-5/16, -5/16, -5/16, 5/16, 5/16, 5/16}, -- NodeBox1
+			{-0.0625, -0.5, -0.0625, 0.0625, 0.5, 0.0625}, -- NodeBox11
+			{-0.5, -0.0625, -0.0625, 0.5, 0.0625, 0.0625}, -- NodeBox12
+			{-0.0625, -0.0625, -0.5, 0.0625, 0.0625, 0.5}, -- NodeBox13
+			{0.25, 0.25, -0.375, 0.375, 0.375, -0.25}, -- NodeBox16
+			{-0.375, 0.25, -0.375, -0.25, 0.375, -0.25}, -- NodeBox17
+			{0.25, 0.25, 0.25, 0.375, 0.375, 0.375}, -- NodeBox18
+			{-0.375, 0.25, 0.25, -0.25, 0.375, 0.375}, -- NodeBox19			
+		}
+	},
+	groups = {
+		dig_immediate = 3,
+		explody = 1,
+		navalmine = 1,
+		not_in_creative_inventory = 1
+	},
+	drop = "landmine:navalmine", --shouldn't happen
+	on_punch = function(pos, node, puncher)
+		if puncher:get_wielded_item():get_name() == "default:torch" then
+			boom(pos)
+		end
+	end,
+	on_blast = boom,
+})
+
 minetest.register_node("landmine:minefield_sign", {
 	description = i18n('Minefield sign'),
 	tiles = {
@@ -270,7 +420,7 @@ minetest.register_node("landmine:minefield_sign", {
 		"default_wood.png",
 		"default_wood.png",
 		"default_wood.png",
-		"default_wood.png^landmine_sign.png",
+		"default_wood.png^minefield_sign.png",
 	},
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -294,6 +444,27 @@ minetest.register_node("landmine:minefield_sign", {
 	end,
 })
 
+minetest.register_node("landmine:navalmine_cable", {
+	description = i18n('Naval mine cable'),
+	tiles = {
+		"navalmine_cable.png",
+		"navalmine_cable.png^[transform2",
+	},
+	walkable = false,
+	climbable = true,
+	sunlight_propagates = true,
+	paramtype = "light",
+	drop = {max_items = 0},
+	tile_images = {"navalmine_cable.png"},
+	drawtype = "plantlike",
+	groups = {
+		cracky=3,
+		not_in_creative_inventory = 1, --only cable reels, not fragments of cable
+	},
+	sounds =  default.node_sound_stone_defaults(),
+	after_dig_node = after_dig_node,
+})
+
 if minetest.get_modpath('dye') ~= nil then
 	minetest.register_craft({
 		type = "shapeless",
@@ -305,6 +476,11 @@ end
 minetest.register_craftitem("landmine:fuze", {
 	description = "Land mine fuze",
 	inventory_image = "landmine_fuze.png",
+})
+
+minetest.register_craftitem("landmine:cable_reel", {
+	description = "Naval mine cable (reel)",
+	inventory_image = "navalmine_cable_reel.png",
 })
 
 minetest.register_craft({
@@ -340,11 +516,28 @@ minetest.register_craft({
 	output = 'landmine:landmine_dirt_with_grass',
 })
 
+if minetest.get_modpath('vessels') ~= nil then
+	minetest.register_craft({
+		output = 'landmine:cable_reel',
+		recipe = {
+			{"default:steel_ingot", "default:steel_ingot","default:steel_ingot"},
+			{"default:steel_ingot", "group:wood","default:steel_ingot"},
+			{"default:steel_ingot", "default:steel_ingot","default:steel_ingot"},
+		}
+	})
+	minetest.register_craft({
+		type = "shapeless",
+		recipe = {'group:vessel', 'landmine:landmine', 'landmine:cable_reel'},
+		output = 'landmine:navalmine',
+	})
+end
+
 minetest.register_abm({
 	nodenames = {"group:landmine"},
 	interval = 1.0,
 	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider)
+	catch_up = false,
+	action = function(pos, _, _, _)
 		--detonate if something is placed above
 		if minetest.get_node({x = pos.x, y = pos.y + 1, z = pos.z}).name ~= "air" then
 			detonate(pos)
@@ -357,6 +550,117 @@ minetest.register_abm({
 				detonate(pos)
 				return
 			end
+		end
+	end
+})
+
+--sticking cable disappears; hanging cable extends down
+minetest.register_abm({
+	nodenames = {"landmine:navalmine_cable"},
+	interval = 600, --once in 10 mins
+	chance = 1,
+	catch_up = false,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		--disappear if air or water above
+		local node_up = minetest.get_node({x = pos.x, y = pos.y + 1, z = pos.z})
+		if node_up.name == "air" or minetest.get_item_group(node_up, "water") > 0 then
+			minetest.remove_node(pos)
+		end
+		--add cable down if water below
+		local node_down = minetest.get_node({x = pos.x, y = pos.y - 1, z = pos.z})
+		if minetest.get_item_group(node_down, "water") > 0 then
+			minetest.set_node({x = pos.x, y = pos.y - 1, z = pos.z}, {name="landmine:navalmine_cable"})
+		end
+	end
+})
+
+--naval mines floating up/down and extending/shringking their cable
+minetest.register_abm({
+	nodenames = {"group:navalmine"},
+	interval = 60, --every minute
+	chance = 1,
+	catch_up = false,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		local pos_up = {x = pos.x, y = pos.y + 1, z = pos.z}
+		local node_up = minetest.get_node(pos_up)
+		local node_down = minetest.get_node({x = pos.x, y = pos.y - 1, z = pos.z})
+		--move up if water above
+		if minetest.get_item_group(node_up.name, "water") ~= 0 then
+			minetest.set_node(pos_up, {name = node.name})
+			minetest.set_node(pos, {name = "landmine:navalmine_cable"})
+			return
+		else
+		end
+		--move down if no water above and around, but water/cable below
+		if minetest.get_item_group(node_up.name, "water") == 0
+			and minetest.get_item_group(minetest.get_node({x = pos.x + 1, y = pos.y, z = pos.z}).name, "water") == 0
+			and minetest.get_item_group(minetest.get_node({x = pos.x - 1, y = pos.y, z = pos.z}).name, "water") == 0
+			and minetest.get_item_group(minetest.get_node({x = pos.x, y = pos.y, z = pos.z + 1}).name, "water") == 0
+			and minetest.get_item_group(minetest.get_node({x = pos.x, y = pos.y, z = pos.z - 1}).name, "water") == 0
+			and ( minetest.get_item_group(node_down, "water") > 0 or minetest.get_node(node_down).name == "landmine:navalmine_cable")
+			then
+			minetest.remove_node(pos)
+			minetest.set_node(pos_down, {name = node.name})
+			return
+		end
+		--if no cable beneath and no need to move down, mark the mine as drifting
+		if node_down.name ~= "landmine:navalmine_cable" then
+			local meta = minetest.get_meta(pos)
+			if meta:get_int("drifting") ~= 1 then
+				meta:set_int("drifting", 1)
+			else
+			end
+		end
+	end
+})
+
+--naval mines watch out for players
+minetest.register_abm({
+	nodenames = {"group:navalmine"},
+	interval = 1.0,
+	chance = 1,
+	catch_up = false,
+	action = function(pos, _, _, _)
+		--detonate if a player approaches the mine
+		local objs = minetest.get_objects_inside_radius(pos, radius * 2)
+		for k, player in pairs(objs) do
+			if player:get_player_name() ~= "" then
+				boom(pos)
+				return
+			end
+		end
+	end
+})
+
+--drifting
+minetest.register_abm({
+	nodenames = {"group:navalmine"},
+	interval = 600, --once in 10 mins
+	chance = 1,
+	catch_up = false,
+	action = function(pos, _, _, _)
+		--only drifting mines
+		if minetest.get_meta(pos):get_int("drifting") ~= 1 then
+			return
+		end
+		local directions = {}
+		if minetest.get_item_group(minetest.get_node({x = pos.x + 1, y = pos.y, z = pos.z}).name, "water") > 0 then
+			table.insert(directions, {x = pos.x + 1, y = pos.y, z = pos.z})
+		end
+		if minetest.get_item_group(minetest.get_node({x = pos.x - 1, y = pos.y, z = pos.z}).name, "water") > 0 then
+			table.insert(directions, {x = pos.x - 1, y = pos.y, z = pos.z})
+		end
+		if minetest.get_item_group(minetest.get_node({x = pos.x, y = pos.y, z = pos.z + 1}).name, "water") > 0 then
+			table.insert(directions, {x = pos.x, y = pos.y, z = pos.z + 1})
+		end
+		if minetest.get_item_group(minetest.get_node({x = pos.x, y = pos.y, z = pos.z - 1}).name, "water") > 0 then
+			table.insert(directions, {x = pos.x, y = pos.y, z = pos.z - 1})
+		end
+		if #directions > 0 then
+			local rnd = math.random(#directions)
+			minetest.set_node(pos, {name = "default:water_source"})
+			minetest.set_node(directions[rnd], {name = "landmine:navalmine_armed"})
+			minetest.get_meta(directions[rnd]):set_int("drifting", 1)
 		end
 	end
 })
