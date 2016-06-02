@@ -287,6 +287,15 @@ minetest.register_node("landmine:landmine_dirt_with_grass_armed", {
 
 minetest.register_node("landmine:navalmine", {
 	description = i18n('Naval mine'),
+	paramtype = "light",
+--uncomment if using 3D model
+--[[
+	paramtype2 = "facedir", --optional
+	tiles = {"navalmine.png"},
+	drawtype = "mesh",
+	mesh = "navalmine.obj",
+]]
+--comment out 'tiles', drawtype', 'node_box' and 'selection_box' below if using 3D model
 	tiles = {
 		"navalmine_top.png",
 		"navalmine_bottom.png",
@@ -296,7 +305,6 @@ minetest.register_node("landmine:navalmine", {
 		"navalmine_side.png"
 	},
 	drawtype = "nodebox",
-	paramtype = "light",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -353,6 +361,15 @@ minetest.register_node("landmine:navalmine", {
 
 minetest.register_node("landmine:navalmine_armed", {
 	description = i18n('Naval mine (armed)'),
+	paramtype = "light",
+--uncomment if using 3D model
+--[[
+	paramtype2 = "facedir", --optional
+	tiles = {"navalmine.png"},
+	drawtype = "mesh",
+	mesh = "navalmine.obj",
+]]
+--comment out 'tiles', drawtype', 'node_box' and 'selection_box' below if using 3D model
 	tiles = {
 		"navalmine_top.png",
 		"navalmine_bottom.png",
@@ -362,7 +379,6 @@ minetest.register_node("landmine:navalmine_armed", {
 		"navalmine_side.png"
 	},
 	drawtype = "nodebox",
-	paramtype = "light",
 	node_box = {
 		type = "fixed",
 		fixed = {
