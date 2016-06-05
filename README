@@ -1,0 +1,62 @@
+Explosives Mod v0.0.1
+=====================
+Adding fuzes to TNT blocks makes it possible to create explosive devices that
+detonate from excessive pressure, heat or sound.
+
+Types of mines
+--------------
+The basic land mine can be created by attaching a fuze to a standard TNT block
+(part of the standard subgame, but needs to be enabled in the config). An armed
+land mine will detonate if punched or stepped upon, and will explode shortly
+after. The mine will explode immediately if touched by a torch. This land mine
+can be concealed in dirt or in dirt with grass (see Recipes).
+
+A land mine can be turned into a naval by attaching a vessel (e.g. bottle) and
+a reel of cable. An armed naval mine will float under water surface and explode
+if approached. A naval mine will start drifting randomly if its cable is broken.
+
+Arming
+------
+All mines are created unarmed and can be handled relatively safely (like a TNT
+block). After placing, a mine needs to be armed manually (by right-clicking and
+pressing the 'Arm' button). It takes 30 seconds, and can be canceled. After a
+mine is armed, there is no way to disarm it. Drifting naval mines are especially
+dangerous.
+
+Crafting
+--------
+Fuze
+---   ingot   ---
+--- gunpowder ---
+---   ingot   ---
+Result: 10 fuzes
+
+Land mine
+tnt + fuze
+
+Land mine concealed in dirt
+landmine + dirt
+
+Land mine concealed in dirt with grass
+landmine + dirt + grass
+
+Cable for naval mines
+ingot ingot ingot
+ingot wood  ingot
+ingot ingot ingot
+Result: 1 reel of cable
+
+Naval mine
+landmine + any vessel + cable
+
+Minefiled sign
+wooden sign + orange dye + red dye + black dye
+
+Authors
+-------
+Vitalie Ciubotaru <vitalie at ciubotaru dot tk>
+
+License
+-------
+see COPYING
+
