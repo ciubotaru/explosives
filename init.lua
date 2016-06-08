@@ -62,8 +62,13 @@ local function detonate(pos, node, player, pointed_thing)
 	local timer = minetest.get_node_timer(pos)
 	if not timer:is_started() then
 		minetest.sound_play("landmine_lock.ogg", {pos = pos})
-		timer:start(3) --3 seconds to run away
-		minetest.set_node(pos, {name = "explosives:landmine_armed"})
+		local delay = math.random(0,3)
+		if delay == 0 then
+			boom(pos)
+		else
+			timer:start(delay)
+			minetest.set_node(pos, {name = "explosives:landmine_armed"})
+		end
 	end
 end
 
