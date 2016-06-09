@@ -107,6 +107,15 @@ end
 
 minetest.register_node("explosives:landmine", {
 	description = i18n('Land mine'),
+	paramtype = "light",
+--uncomment if using 3D model
+--[[
+	paramtype2 = "facedir", --optional
+	tiles = {"landmine.png"},
+	drawtype = "mesh",
+	mesh = "landmine.obj",
+]]
+--comment out 'tiles', drawtype', 'node_box' and 'selection_box' below if using 3D model
 	tiles = {
 		"landmine_top.png",
 		"landmine_bottom.png",
@@ -116,7 +125,6 @@ minetest.register_node("explosives:landmine", {
 		"landmine_side.png"
 	},
 	drawtype = "nodebox",
-	paramtype = "light",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -150,6 +158,15 @@ minetest.register_node("explosives:landmine", {
 
 minetest.register_node("explosives:landmine_armed", {
 	description = i18n('Land mine (armed)'),
+	paramtype = "light",
+--uncomment if using 3D model
+--[[
+	paramtype2 = "facedir", --optional
+	tiles = {"landmine.png"},
+	drawtype = "mesh",
+	mesh = "landmine.obj",
+]]
+--comment out 'tiles', drawtype', 'node_box' and 'selection_box' below if using 3D model
 	tiles = {
 		"landmine_top.png",
 		"landmine_bottom.png",
@@ -159,7 +176,6 @@ minetest.register_node("explosives:landmine_armed", {
 		"landmine_side.png"
 	},
 	drawtype = "nodebox",
-	paramtype = "light",
 	node_box = {
 		type = "fixed",
 		fixed = {
