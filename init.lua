@@ -58,6 +58,16 @@ local function on_rightclick(pos, node, clicker, itemstack)
 	return itemstack
 end
 
+local function boom(pos)
+	local node = minetest.get_node(pos)
+	local def = {
+		name = node.name,
+		radius = radius,
+		damage_radius = radius * 2,
+	}
+	tnt.boom(pos, def)
+end
+
 local function detonate(pos, node, player, pointed_thing)
 	local timer = minetest.get_node_timer(pos)
 	if not timer:is_started() then
@@ -70,16 +80,6 @@ local function detonate(pos, node, player, pointed_thing)
 			minetest.set_node(pos, {name = "explosives:landmine_armed"})
 		end
 	end
-end
-
-local function boom(pos)
-	local node = minetest.get_node(pos)
-	local def = {
-		name = node.name,
-		radius = radius,
-		damage_radius = radius * 2,
-	}
-	tnt.boom(pos, def)
 end
 
 local function dig_up(pos, node, digger)
