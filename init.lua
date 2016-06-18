@@ -231,7 +231,7 @@ minetest.register_node("explosives:minefield_sign", {
 		"default_wood.png",
 		"default_wood.png",
 		"default_wood.png",
-		"default_wood.png^minefield_sign.png",
+		"default_wood.png^explosives_minefield_sign.png",
 	},
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -258,15 +258,15 @@ minetest.register_node("explosives:minefield_sign", {
 minetest.register_node("explosives:navalmine_cable", {
 	description = i18n('Naval mine cable'),
 	tiles = {
-		"navalmine_cable.png",
-		"navalmine_cable.png^[transform2",
+		"explosives_navalmine_cable.png",
+		"explosives_navalmine_cable.png^[transform2",
 	},
 	walkable = false,
 	climbable = true,
 	sunlight_propagates = true,
 	paramtype = "light",
 	drop = {max_items = 0},
-	tile_images = {"navalmine_cable.png"},
+	tile_images = {"explosives_navalmine_cable.png"},
 	drawtype = "plantlike",
 	groups = {
 		cracky=3,
@@ -286,12 +286,12 @@ end
 
 minetest.register_craftitem("explosives:fuze", {
 	description = "Land mine fuze",
-	inventory_image = "landmine_fuze.png",
+	inventory_image = "explosives_landmine_fuze.png",
 })
 
 minetest.register_craftitem("explosives:cable_reel", {
 	description = "Naval mine cable (reel)",
-	inventory_image = "navalmine_cable_reel.png",
+	inventory_image = "explosives_navalmine_cable_reel.png",
 })
 
 minetest.register_craft({

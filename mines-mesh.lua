@@ -7,7 +7,7 @@ minetest.register_node("explosives:landmine", {
 	description = i18n('Land mine'),
 	paramtype = "light",
 	paramtype2 = "facedir", --optional
-	tiles = {"landmine.png"},
+	tiles = {"explosives_landmine.png"},
 	drawtype = "mesh",
 	mesh = "landmine.obj",
 	groups = {
@@ -31,7 +31,7 @@ minetest.register_node("explosives:landmine_armed", {
 	description = i18n('Land mine (armed)'),
 	paramtype = "light",
 	paramtype2 = "facedir", --optional
-	tiles = {"landmine.png"},
+	tiles = {"explosives_landmine.png"},
 	drawtype = "mesh",
 	mesh = "landmine.obj",
 	groups = {
@@ -53,7 +53,7 @@ minetest.register_node("explosives:navalmine", {
 	description = i18n('Naval mine'),
 	paramtype = "light",
 	paramtype2 = "facedir", --optional
-	tiles = {"navalmine.png"},
+	tiles = {"explosives_navalmine.png"},
 	drawtype = "mesh",
 	mesh = "navalmine.obj",
 	groups = {
@@ -80,7 +80,7 @@ minetest.register_node("explosives:navalmine_armed", {
 	description = i18n('Naval mine (armed)'),
 	paramtype = "light",
 	paramtype2 = "facedir", --optional
-	tiles = {"navalmine.png"},
+	tiles = {"explosives_navalmine.png"},
 	drawtype = "mesh",
 	mesh = "navalmine.obj",
 	groups = {

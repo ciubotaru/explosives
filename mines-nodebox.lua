@@ -7,12 +7,12 @@ minetest.register_node("explosives:landmine", {
 	description = i18n('Land mine'),
 	paramtype = "light",
 	tiles = {
-		"landmine_top.png",
-		"landmine_bottom.png",
-		"landmine_side.png",
-		"landmine_side.png",
-		"landmine_side.png",
-		"landmine_side.png"
+		"explosives_landmine_top.png",
+		"explosives_landmine_bottom.png",
+		"explosives_landmine_side.png",
+		"explosives_landmine_side.png",
+		"explosives_landmine_side.png",
+		"explosives_landmine_side.png"
 	},
 	drawtype = "nodebox",
 	node_box = {
@@ -49,12 +49,12 @@ minetest.register_node("explosives:landmine_armed", {
 	description = i18n('Land mine (armed)'),
 	paramtype = "light",
 	tiles = {
-		"landmine_top.png",
-		"landmine_bottom.png",
-		"landmine_side.png",
-		"landmine_side.png",
-		"landmine_side.png",
-		"landmine_side.png"
+		"explosives_landmine_top.png",
+		"explosives_landmine_bottom.png",
+		"explosives_landmine_side.png",
+		"explosives_landmine_side.png",
+		"explosives_landmine_side.png",
+		"explosives_landmine_side.png"
 	},
 	drawtype = "nodebox",
 	node_box = {
@@ -89,12 +89,12 @@ minetest.register_node("explosives:navalmine", {
 	description = i18n('Naval mine'),
 	paramtype = "light",
 	tiles = {
-		"navalmine_top.png",
-		"navalmine_bottom.png",
-		"navalmine_side.png",
-		"navalmine_side.png",
-		"navalmine_side.png",
-		"navalmine_side.png"
+		"explosives_navalmine_top.png",
+		"explosives_navalmine_bottom.png",
+		"explosives_navalmine_side.png",
+		"explosives_navalmine_side.png",
+		"explosives_navalmine_side.png",
+		"explosives_navalmine_side.png"
 	},
 	drawtype = "nodebox",
 	node_box = {
@@ -155,12 +155,12 @@ minetest.register_node("explosives:navalmine_armed", {
 	description = i18n('Naval mine (armed)'),
 	paramtype = "light",
 	tiles = {
-		"navalmine_top.png",
-		"navalmine_bottom.png",
-		"navalmine_side.png",
-		"navalmine_side.png",
-		"navalmine_side.png",
-		"navalmine_side.png"
+		"explosives_navalmine_top.png",
+		"explosives_navalmine_bottom.png",
+		"explosives_navalmine_side.png",
+		"explosives_navalmine_side.png",
+		"explosives_navalmine_side.png",
+		"explosives_navalmine_side.png"
 	},
 	drawtype = "nodebox",
 	node_box = {
