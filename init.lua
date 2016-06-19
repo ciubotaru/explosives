@@ -294,6 +294,11 @@ minetest.register_craftitem("explosives:cable_reel", {
 	inventory_image = "explosives_navalmine_cable_reel.png",
 })
 
+minetest.register_craftitem("explosives:hourglass", {
+	description = "Hourglass",
+	inventory_image = "explosives_hourglass.png",
+})
+
 minetest.register_craft({
 	output = 'explosives:fuze 10',
 	recipe = {
@@ -342,6 +347,15 @@ if minetest.get_modpath('vessels') ~= nil then
 		output = 'explosives:navalmine',
 	})
 end
+
+minetest.register_craft({
+	output = 'explosives:hourglass',
+	recipe = {
+		{"", "vessels:glass_bottle",""},
+		{"", "default:sand",""},
+		{"", "vessels:glass_bottle",""},
+	}
+})
 
 minetest.register_abm({
 	nodenames = {"group:landmine"},
