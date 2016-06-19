@@ -1,5 +1,6 @@
 local i18n = explosives.i18n
-local on_rightclick = explosives.on_rightclick
+local set_arm = explosives.set_arm
+local set_time = explosives.set_time
 local boom = explosives.boom
 local detonate = explosives.detonate
 
@@ -37,7 +38,7 @@ minetest.register_node("explosives:landmine", {
 			boom(pos)
 		end
 	end,
-	on_rightclick = on_rightclick,
+	on_rightclick = set_arm,
 	on_timer = function(pos, elapsed)
 		minetest.remove_node(pos)
 		minetest.place_node(pos, {name = 'explosives:landmine_armed'})
@@ -140,7 +141,7 @@ minetest.register_node("explosives:navalmine", {
 			boom(pos)
 		end
 	end,
-	on_rightclick = on_rightclick,
+	on_rightclick = set_arm,
 	on_timer = function(pos, elapsed)
 		--make sure it didn't move
 		if minetest.get_node(pos).name == "explosives:navalmine" then
@@ -209,6 +210,42 @@ minetest.register_node("explosives:navalmine_armed", {
 			boom(pos)
 		end
 	end,
+	on_blast = boom,
+})
+
+minetest.register_node("explosives:timebomb", {
+	description = i18n('Time bomb'),
+	paramtype = "light",
+	paramtype2 = "facedir",
+	tiles = {
+		"explosives_timebomb_top.png",
+		"explosives_timebomb_bottom.png",
+		"explosives_timebomb_side.png",
+		"explosives_timebomb_side.png^[transformFX",
+		"explosives_timebomb_front.png",
+		"explosives_timebomb_front.png"
+	},
+	drawtype = "nodebox",
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.5, -0.5, -0.5, 0.5, -0.25, 0.5}, -- NodeBox11
+			{-0.5, -0.25, -0.375, 0.5, 0, 0.375}, -- NodeBox12
+			{-0.5, 0, -0.25, 0.5, 0.25, 0.25}, -- NodeBox13
+			{-0.3125, 0.25, -0.1875, 0.3125, 0.3125, 0.1875}, -- NodeBox14
+		}
+	},
+	groups = {
+		dig_immediate = 3,
+		explody = 1,
+	},
+	on_punch = function(pos, node, puncher)
+		if puncher:get_wielded_item():get_name() == "default:torch" then
+			boom(pos)
+		end
+	end,
+	on_rightclick = set_time,
+	on_timer = boom,
 	on_blast = boom,
 })
 

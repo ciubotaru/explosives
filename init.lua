@@ -31,7 +31,7 @@ if (not singleplayer and setting ~= true) or
 end
 local enable_mesh = minetest.setting_getbool("enable_explomesh")
 
-local function formspec(pos)
+local function arm_formspec(pos)
 	local timer = minetest.get_node_timer(pos)
 	local formspec =
 		'size[8,2]'..
@@ -52,16 +52,49 @@ local function formspec(pos)
 	end
 end
 
-explosives.on_rightclick = function(pos, node, clicker, itemstack)
+local function time_formspec(pos)
+	local timer = minetest.get_node_timer(pos)
+	local formspec =
+		'size[8,3]'..
+--a dirty hack to pass node coords to player_receive_fields
+		'field[0,0;0,0;x;;' .. pos.x .. ']'..
+		'field[0,0;0,0;y;;' .. pos.y .. ']'..
+		'field[0,0;0,0;z;;' .. pos.z .. ']'
+	if timer:is_started() then
+		formspec = formspec ..
+		'label[0,0;' .. i18n('The bomb will explode in @1 seconds', timer:get_timeout() - timer:get_elapsed()) .. ']' ..
+		'button_exit[0,2;8,1;quit;' .. i18n('Close') .. ']'
+		return formspec
+	else
+		formspec = formspec ..
+		'label[0,0;' .. i18n('Time to explosion in seconds') .. ']' ..
+		'field[3,1;2,1;time;;0]' ..
+		'button_exit[0,2;8,1;start;' .. i18n('Set the timer') .. ']'
+		return formspec
+	end
+end
+
+explosives.set_arm = function(pos, node, clicker, itemstack)
 	minetest.show_formspec(
 		clicker:get_player_name(),
-		'explosives',
-		formspec(pos)
+		'explosives:set_arm',
+		arm_formspec(pos)
 	)
 	return itemstack
 end
 
-local on_rightclick = explosives.on_rightclick
+local set_arm = explosives.set_arm
+
+explosives.set_time = function(pos, node, clicker, itemstack)
+	minetest.show_formspec(
+		clicker:get_player_name(),
+		'explosives:set_time',
+		time_formspec(pos)
+	)
+	return itemstack
+end
+
+local set_time = explosives.set_time
 
 explosives.boom = function(pos)
 	local node = minetest.get_node(pos)
@@ -134,7 +167,7 @@ minetest.register_node("explosives:landmine_dirt", {
 			boom(pos)
 		end
 	end,
-	on_rightclick = on_rightclick,
+	on_rightclick = set_arm,
 	on_timer = function(pos, elapsed)
 		minetest.remove_node(pos)
 		minetest.place_node(pos, {name = 'explosives:landmine_dirt_armed'})
@@ -185,7 +218,7 @@ minetest.register_node("explosives:landmine_dirt_with_grass", {
 			boom(pos)
 		end
 	end,
-	on_rightclick = on_rightclick,
+	on_rightclick = set_arm,
 	on_timer = function(pos, elapsed)
 		minetest.remove_node(pos)
 		minetest.place_node(pos, {name = 'explosives:landmine_dirt_with_grass_armed'})
@@ -285,17 +318,17 @@ if minetest.get_modpath('dye') ~= nil then
 end
 
 minetest.register_craftitem("explosives:fuze", {
-	description = "Land mine fuze",
+	description = i18n('Land mine fuze'),
 	inventory_image = "explosives_landmine_fuze.png",
 })
 
 minetest.register_craftitem("explosives:cable_reel", {
-	description = "Naval mine cable (reel)",
+	description = i18n('Naval mine cable (reel)'),
 	inventory_image = "explosives_navalmine_cable_reel.png",
 })
 
 minetest.register_craftitem("explosives:hourglass", {
-	description = "Hourglass",
+	description = i18n('Hourglass'),
 	inventory_image = "explosives_hourglass.png",
 })
 
@@ -341,12 +374,12 @@ if minetest.get_modpath('vessels') ~= nil then
 			{"default:steel_ingot", "default:steel_ingot","default:steel_ingot"},
 		}
 	})
+
 	minetest.register_craft({
 		type = "shapeless",
 		recipe = {'group:vessel', 'explosives:landmine', 'explosives:cable_reel'},
 		output = 'explosives:navalmine',
 	})
-end
 
 minetest.register_craft({
 	output = 'explosives:hourglass',
@@ -356,6 +389,13 @@ minetest.register_craft({
 		{"", "vessels:glass_bottle",""},
 	}
 })
+
+	minetest.register_craft({
+		type = "shapeless",
+		recipe = {'explosives:hourglass', 'explosives:fuze', 'tnt:tnt'},
+		output = 'explosives:timebomb',
+	})
+end
 
 minetest.register_abm({
 	nodenames = {"group:landmine"},
@@ -491,16 +531,30 @@ minetest.register_abm({
 })
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-	if formname ~= "explosives" then return end
+	if formname ~= "explosives:set_arm" then return false end
 	local timer = minetest.get_node_timer({x = fields.x, y = fields.y, z = fields.z})
 	if fields.start then
 		timer:start(30)
-		return
+		return true
 	end
 	if fields.stop then
 		timer:stop()
-		return
+		return true
 	end
+	return true
+end)
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	if formname ~= "explosives:set_time" then return false end
+	local timer = minetest.get_node_timer({x = fields.x, y = fields.y, z = fields.z})
+	if fields.start then
+		local timeout = tonumber(fields.time)
+		if timeout ~= nil and timeout > 0 and timeout < 3600 then
+			timer:start(timeout)
+		end
+		return true
+	end
+	return true
 end)
 
 minetest.log('action', 'MOD: Explosives version ' .. explosives_version .. ' loaded.')
