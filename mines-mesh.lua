@@ -12,7 +12,7 @@ minetest.register_node("explosives:landmine", {
 	drawtype = "mesh",
 	mesh = "landmine.obj",
 	groups = {
-		dig_immediate = 3,
+		dig_immediate = 2,
 		explody = 1,
 	},
 	on_punch = function(pos, node, puncher)
@@ -58,7 +58,7 @@ minetest.register_node("explosives:navalmine", {
 	drawtype = "mesh",
 	mesh = "navalmine.obj",
 	groups = {
-		dig_immediate = 3,
+		dig_immediate = 2,
 		explody = 1,
 	},
 	on_punch = function(pos, node, puncher)
@@ -85,7 +85,6 @@ minetest.register_node("explosives:navalmine_armed", {
 	drawtype = "mesh",
 	mesh = "navalmine.obj",
 	groups = {
-		dig_immediate = 3,
 		explody = 1,
 		navalmine = 1,
 		not_in_creative_inventory = 1
@@ -107,7 +106,7 @@ minetest.register_node("explosives:timebomb", {
 	drawtype = "mesh",
 	mesh = "timebomb.obj",
 	groups = {
-		dig_immediate = 3,
+		dig_immediate = 2,
 		explody = 1,
 	},
 	on_punch = function(pos, node, puncher)
@@ -119,4 +118,3 @@ minetest.register_node("explosives:timebomb", {
 	on_timer = boom,
 	on_blast = boom,
 })
-
