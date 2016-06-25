@@ -381,18 +381,24 @@ if minetest.get_modpath('vessels') ~= nil then
 		output = 'explosives:navalmine',
 	})
 
-minetest.register_craft({
-	output = 'explosives:hourglass',
-	recipe = {
-		{"", "vessels:glass_bottle",""},
-		{"", "default:sand",""},
-		{"", "vessels:glass_bottle",""},
-	}
-})
+	minetest.register_craft({
+		output = 'explosives:hourglass',
+		recipe = {
+			{"", "vessels:glass_bottle",""},
+			{"", "default:sand",""},
+			{"", "vessels:glass_bottle",""},
+		}
+	})
 
 	minetest.register_craft({
 		type = "shapeless",
 		recipe = {'explosives:hourglass', 'explosives:fuze', 'tnt:tnt'},
+		output = 'explosives:timebomb',
+	})
+
+	minetest.register_craft({
+		type = "shapeless",
+		recipe = {'explosives:hourglass', 'explosives:landmine'},
 		output = 'explosives:timebomb',
 	})
 end
