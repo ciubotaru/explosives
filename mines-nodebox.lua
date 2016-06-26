@@ -242,6 +242,9 @@ minetest.register_node("explosives:timebomb", {
 		if puncher:get_wielded_item():get_name() == "default:torch" then
 			boom(pos)
 		end
+		if minetest.get_node_timer(pos):is_started() then
+			boom(pos)
+		end
 	end,
 	on_rightclick = set_time,
 	on_timer = boom,
